@@ -7,7 +7,7 @@ provider:
   name: aws
   runtime: nodejs8.10
   stage: dev
-  region: eu-west-1
+  region: eu-central-1
   tags:
     TEAM: test
 
@@ -100,7 +100,7 @@ resources:
     restaurantsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: restaurants-${self:provider.stage}-fuglu
+        TableName: ${ssm:/${self:service}/${self:provider.stage}/table_name}
         AttributeDefinitions:
           - AttributeName: name
             AttributeType: S
@@ -114,14 +114,14 @@ resources:
     orderEventsStream:
       Type: AWS::Kinesis::Stream
       Properties:
-        Name: orders-${self:provider.stage}-fuglu
+        Name: ${ssm:/${self:service}/${self:provider.stage}/stream_name}
         ShardCount: 1
 
     restaurantNotificationTopic:
       Type: AWS::SNS::Topic
       Properties:
-        DisplayName: restaurants-${self:provider.stage}-fuglu
-        TopicName: restaurants-${self:provider.stage}-fuglu
+        DisplayName: ${ssm:/${self:service}/${self:provider.stage}/restaurant_topic_name}
+        TopicName: ${ssm:/${self:service}/${self:provider.stage}/restaurant_topic_name}
 
     mySubscription:
       Type: AWS::SNS::Subscription
